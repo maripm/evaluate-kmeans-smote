@@ -20,24 +20,14 @@ with open("config.yml", 'r') as ymlfile:
 def main():
     experiment_config = {
         'comment': 'Keel run',
-        'experiment_repetitions': 5,
-        'n_splits':5,
+        'experiment_repetitions': 1,
+        'n_splits':2,
         'random_seed': int(os.urandom(1)[0] / 255 * (2**32)),
     }
 
     classifiers = [
         (
             'LR', LogisticRegression()
-        ),(
-            'GBM',GradientBoostingClassifier(),
-            [{
-                'n_estimators': [50, 100, 200]
-            }]
-        ),(
-            'KNN',KNeighborsClassifier(),
-            [{
-                'n_neighbors': [3,5,8]
-            }]
         )
     ]
     oversampling_methods = [
@@ -46,44 +36,20 @@ def main():
         (
             'SMOTE', SMOTE(),
             [{
-                'k_neighbors': [3,5,20]
-            }]
-        ),
-        (
-            'B1-SMOTE', SMOTE(kind='borderline1'),
-            [{
-                'k_neighbors': [3,5,20]
-            }]
-        ),
-        (
-            'B2-SMOTE', SMOTE(kind='borderline2'),
-            [{
-                'k_neighbors': [3,5,20]
+                'k_neighbors': [3]
             }]
         ),
         (
             'KMeansSMOTE', KMeansSMOTE(),
             [
                 {
-                    'imbalance_ratio_threshold': [1,float('Inf')],
-                    'density_power': [0, 2, None], # None corresponds to n_features
+                    'imbalance_ratio_threshold': [1],
+                    'density_power': [None], # None corresponds to n_features
                     'smote_args': [
-                        {'k_neighbors': 3},{'k_neighbors': 5},
-                        {'k_neighbors': 20},{'k_neighbors': float('Inf')}
+                        {'k_neighbors': 5},
                     ],
                     'kmeans_args': [
-                        {'n_clusters': 2}, {'n_clusters': 20}, {'n_clusters': 50},
-                        {'n_clusters': 100}, {'n_clusters':250}, {'n_clusters':500}
-                    ],
-                    'use_minibatch_kmeans':[True],
-                    'n_jobs':[-1]
-                },
-                # SMOTE Limit Case
-                {
-                    'imbalance_ratio_threshold': [float('Inf')],
-                    'kmeans_args': [{'n_clusters':1}],
-                    'smote_args': [
-                        {'k_neighbors': 3},{'k_neighbors': 5}
+                        {'n_clusters': 2}
                     ],
                     'use_minibatch_kmeans':[True],
                     'n_jobs':[-1]
